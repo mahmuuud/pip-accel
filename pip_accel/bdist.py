@@ -211,10 +211,10 @@ class BinaryDistributionManager(object):
         .. _issue 37: https://github.com/paylogic/pip-accel/issues/37
         """
         try:
-            return self.build_binary_dist_helper(requirement, ['bdist_dumb', '--format=tar'])
+            return self.build_binary_dist_helper(requirement, ['bdist_wheel', '--format=tar'])
         except (BuildFailed, NoBuildOutput):
             logger.warning("Build of %s failed, falling back to alternative method ..", requirement)
-            return self.build_binary_dist_helper(requirement, ['bdist', '--formats=gztar'])
+            return self.build_binary_dist_helper(requirement, ['sdist', '--formats=gztar'])
 
     def build_binary_dist_helper(self, requirement, setup_command):
         """
