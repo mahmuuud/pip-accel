@@ -211,10 +211,14 @@ class BinaryDistributionManager(object):
         .. _issue 37: https://github.com/paylogic/pip-accel/issues/37
         """
         try:
-            return self.build_binary_dist_helper(requirement, ['bdist_wheel', '--format=tar'])
+            return self.build_binary_dist_helper(requirement, ['bdist_dumb', '--format=tar'])
         except (BuildFailed, NoBuildOutput):
             logger.warning("Build of %s failed, falling back to alternative method ..", requirement)
-            return self.build_binary_dist_helper(requirement, ['sdist', '--formats=gztar'])
+            try:
+                return self.build_binary_dist_helper(requirement, ['bdist', '--formats=tar'])
+            except (BuildFailed, NoBuildOutput):
+                return self.build_binary_dist_helper(requirement, ['bdist', '--force', '--formats=tar'])
+
 
     def build_binary_dist_helper(self, requirement, setup_command):
         """
@@ -237,7 +241,7 @@ class BinaryDistributionManager(object):
             msg = "Directory %s (%s %s) doesn't contain a source distribution!"
             raise InvalidSourceDistribution(msg % (requirement.source_directory, requirement.name, requirement.version))
         # Let the user know what's going on.
-        build_text = "Building %s binary distribution" % requirement
+        build_text = "Building %s binary distribution from visyond pip-accel" % requirement
         logger.info("%s ..", build_text)
         # Cleanup previously generated distributions.
         dist_directory = os.path.join(requirement.source_directory, 'dist')

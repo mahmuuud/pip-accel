@@ -4,3 +4,5 @@
 build/
 dist/
 pip_accel.egg-info/
+
+.DS_Store
